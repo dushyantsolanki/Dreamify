@@ -1,35 +1,44 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import "./App.css";
+import { useImageFetch } from "./Hook/useImageFetch";
+import { useState } from "react";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [prompt, setPrompt] = useState("");
+  const [imageUrl, setUrl] = useState("");
+  const [revisedPrompt, setRevisedPrompt] = useState("");
 
+  const onSubmitHandel = async (e) => {
+    e.preventDefault();
+    const data = await useImageFetch({ prompt });
+    const { url, revised_prompt } = data;
+    setUrl(url);
+    setRevisedPrompt(revised_prompt);
+    console.log(url, revised_prompt);
+  };
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      <div className="main" style={{ boxSizing: "border-box" }}>
+        <img
+          src={imageUrl || `https://etimg.etb2bimg.com/photo/99959880.cms`}
+          alt=""
+        />
+        <p>{revisedPrompt}</p>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <form onSubmit={onSubmitHandel}>
+        <div className="prompt">
+          <label htmlFor="prompt">Prompt : </label>
+          <input
+            type="text"
+            value={prompt}
+            onChange={(e) => {
+              setPrompt(e.target.value);
+            }}
+          />
+          <button>Send</button>
+        </div>
+      </form>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
